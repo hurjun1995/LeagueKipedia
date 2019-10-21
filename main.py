@@ -4,7 +4,7 @@ import argparse, json, requests
 from bs4 import BeautifulSoup
 
 
-class Leagkipedia:
+class LeagueKipedia:
     soup = None
     champion_info_dict = None
 
@@ -76,4 +76,4 @@ class Leagkipedia:
         args.func(args)
 
 if __name__ == "__main__":
-    Leagkipedia().main()
+    LeagueKipedia().main()
