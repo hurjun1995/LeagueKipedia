@@ -75,16 +75,36 @@ class LeagueKipedia:
 
         # print
         print("Counter Champions:")
-        print("{:>12} {:>13} {:>14} {:>15}".format("", "name", "win rate", "total played"))
+        print("{:>12} {:>13} {:>14} {:>15}".format("index", "name", "win rate", "total played"))
         for i, champ in enumerate(counter_champion_list):
             name = champ.find('div', class_='champion-matchup-list__champion').find('span').text
             win_rate = champ.find('span', class_='champion-matchup-list__winrate').text.strip()
             total_played = champ.find('div', class_='champion-matchup-list__totalplayed').find('span').text
             print("{:>12} {:>13} {:>14} {:>15}".format(i, name, win_rate, total_played))
 
-    @staticmethod
-    def print_item():
-        print("print item: stub")
+    def print_item(self):
+        # fetch and parse information
+        res = requests.get("https://na.op.gg/champion/{champ}/statistics/{lane}/item?"
+                           .format(champ=self.champ_name, lane=self.champ_lane))
+        soup = BeautifulSoup(res.content, features="html.parser")
+        item_info_list_sorted = soup.find("div", class_="championLayout-item")\
+            .find('div', class_='l-champion-statistics-content__side')\
+            .find('tbody')\
+            .find_all('tr')
+
+        # print
+        print("Recommended Items:")
+        print("{:>12} {:>20} {:>12} {:>12}".format("index", "item name", "win rate", "pick rate"))
+        for i, item_info in enumerate(item_info_list_sorted):
+            if i < 10:
+                name = item_info.find('span').text
+                win_rate = item_info.find('td', class_='champion-stats__table__cell--winrate').text
+                pick_rate = item_info\
+                    .find('td', class_='champion-stats__table__cell--pickrate')\
+                    .find(text=True).strip()
+                print("{:>12} {:>20} {:>12} {:>12}".format(i, name, win_rate, pick_rate))
+            else:
+                break
 
     def handle_champion_command(self, args):
         self.champ_name = args.champion_name
