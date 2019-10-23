@@ -74,7 +74,7 @@ class LeagueKipedia:
             .sort(key=lambda c: float(c.find('span', class_="champion-matchup-list__winrate").text.strip().strip('%')))
 
         # print
-        print("Counter Champions:")
+        print("Counter Champions and win rate against them:")
         print("{:>12} {:>13} {:>14} {:>15}".format("index", "name", "win rate", "total played"))
         for i, champ in enumerate(counter_champion_list):
             name = champ.find('div', class_='champion-matchup-list__champion').find('span').text
@@ -94,7 +94,7 @@ class LeagueKipedia:
 
         # print
         print("Recommended Items:")
-        print("{:>12} {:>20} {:>12} {:>12}".format("index", "item name", "win rate", "pick rate"))
+        print("{:>12} {:>25} {:>12} {:>12}".format("index", "item name", "win rate", "pick rate"))
         for i, item_info in enumerate(item_info_list_sorted):
             if i < 10:
                 name = item_info.find('span').text
@@ -102,7 +102,7 @@ class LeagueKipedia:
                 pick_rate = item_info\
                     .find('td', class_='champion-stats__table__cell--pickrate')\
                     .find(text=True).strip()
-                print("{:>12} {:>20} {:>12} {:>12}".format(i, name, win_rate, pick_rate))
+                print("{:>12} {:>25} {:>12} {:>12}".format(i, name, win_rate, pick_rate))
             else:
                 break
 
