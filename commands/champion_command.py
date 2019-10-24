@@ -69,19 +69,19 @@ class ChampionCommand(CommandBase):
             print("'{champ}' is not existing champion name".format(champ=self.champ_name))
             return
 
-        print("information on: {champ} at {lane}".format(champ=self.champ_name, lane=self.champ_lane))
-        sub_commands = []
+        sub_commands_to_run = []
         if not args.skill and not args.counter and not args.item:
-            sub_commands = [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]
+            sub_commands_to_run = [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]
         else:
             if args.skill:
-                sub_commands.append(self.skill_sub_command)
+                sub_commands_to_run.append(self.skill_sub_command)
             if args.item:
-                sub_commands.append(self.item_sub_command)
+                sub_commands_to_run.append(self.item_sub_command)
             if args.counter:
-                sub_commands.append(self.counter_sub_command)
+                sub_commands_to_run.append(self.counter_sub_command)
 
-        for sc in sub_commands:
+        print("information on: {champ} at {lane}".format(champ=self.champ_name, lane=self.champ_lane))
+        for sc in sub_commands_to_run:
             sc.retrieve()
             sc.parse()
             sc.print()
