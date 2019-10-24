@@ -34,12 +34,15 @@ class ChampionCommand(CommandBase):
         self.counter_sub_command = CounterSubCommand()
         self.item_sub_command = ItemSubCommand()
 
+    def get_all_sub_commands(self):
+        return [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]
+
     def add_command_to_subparser(self, subparsers):
         champion_subparser = subparsers.add_parser("champion")
         champion_subparser.add_argument('champion_name', type=str, help="Name of the champion")
         champion_subparser.add_argument('lane', type=Lane, choices=list(Lane), help='Lane to which champion goes')
 
-        for sc in [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]:
+        for sc in self.get_all_sub_commands():
             sc.add_argument(champion_subparser)
 
         champion_subparser.set_defaults(func=self.run_command)
@@ -62,7 +65,7 @@ class ChampionCommand(CommandBase):
     def run_command(self, args):
         self.champ_name = args.champion_name
         self.champ_lane = args.lane.value
-        for sc in [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]:
+        for sc in self.get_all_sub_commands():
             sc.set_champ_info(self.champ_name, self.champ_lane)
 
         if not self.is_valid_champion():
@@ -71,7 +74,7 @@ class ChampionCommand(CommandBase):
 
         sub_commands_to_run = []
         if not args.skill and not args.counter and not args.item:
-            sub_commands_to_run = [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]
+            sub_commands_to_run = self.get_all_sub_commands()
         else:
             if args.skill:
                 sub_commands_to_run.append(self.skill_sub_command)
