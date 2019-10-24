@@ -42,7 +42,7 @@ class ChampionCommand(CommandBase):
         for sc in [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]:
             sc.add_argument(champion_subparser)
 
-        champion_subparser.set_defaults(func=self.handle_champion_command)
+        champion_subparser.set_defaults(func=self.run_command)
 
     @staticmethod
     def get_official_champion_info():
@@ -59,7 +59,7 @@ class ChampionCommand(CommandBase):
         champ_name = "".join(s)
         return champ_name in self.champion_info_dict
 
-    def handle_champion_command(self, args):
+    def run_command(self, args):
         self.champ_name = args.champion_name
         self.champ_lane = args.lane.value
         for sc in [self.skill_sub_command, self.counter_sub_command, self.item_sub_command]:
