@@ -2,6 +2,7 @@
 
 import argparse
 from commands.champion_command import ChampionCommand
+from commands.search_command import SearchCommand
 
 
 def main():
@@ -9,7 +10,9 @@ def main():
     subparsers = command_parser.add_subparsers()
 
     champion_command = ChampionCommand()
-    champion_command.add_command_to_subparser(subparsers)
+    search_command = SearchCommand()
+    for c in [champion_command, search_command]:
+        c.add_command_to_subparser(subparsers)
 
     args = command_parser.parse_args()
     args.func(args)
