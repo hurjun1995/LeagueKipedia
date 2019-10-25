@@ -14,7 +14,7 @@ class SearchCommand(CommandBase):
         search_subparser.set_defaults(func=self.run_command)
 
     def run_command(self, args):
-        self.champions_stat_sub_command.set_user_name(args.username)
+        self.champions_stat_sub_command.set_user_name(' '.join(args.username))
         self.champions_stat_sub_command.retrieve()
         self.champions_stat_sub_command.parse()
         self.champions_stat_sub_command.print()
