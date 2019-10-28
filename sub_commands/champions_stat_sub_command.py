@@ -50,8 +50,13 @@ class ChampionsStatSubCommand(SubCommandBase):
             }
 
     def parse(self):
+        # TODO: handle exceptions
         self._parse_most_played_champions()
         self._parse_recent_games()
+
+        # except:
+        #     print('error!')
+        #     exit(1)
 
     def _print_most_played_champions(self):
         print(f'7 champions most played by: {self.user_name}')
@@ -71,7 +76,8 @@ class ChampionsStatSubCommand(SubCommandBase):
 
         for key in self.recent_games_info:
             info_dict = self.recent_games_info[key]
-            print("{:>12} {:>13} {:>10} {:>10}".format(info_dict['game_result'], info_dict['champ_played'], info_dict['kda'], info_dict['kda_ratio']))
+            print("{:>12} {:>13} {:>10} {:>10}".format(info_dict['game_result'], info_dict['champ_played'],
+                                                       info_dict['kda'], info_dict['kda_ratio']))
 
     def print(self):
         self._print_most_played_champions()

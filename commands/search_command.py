@@ -1,4 +1,5 @@
 import pyperclip
+import re
 
 from commands.command_base import CommandBase
 from sub_commands.champions_stat_sub_command import ChampionsStatSubCommand
@@ -23,13 +24,17 @@ class SearchCommand(CommandBase):
             if clipboard_text is None:
                 return
             else:
-                user_id_set = {line.split()[0] for line in clipboard_text.split('\n')}
-                for user_id in user_id_set:
-                    print(user_id)
-                    self.run_champions_stat_sub_command(user_id)
+                user_name_set = set()
+                for line in clipboard_text.split('\n'):
+                    match = re.search(r'(.+)\sjoined the lobby', line)
+                    if match is not None:
+                        user_name_set.add(match.group(1))
 
-    def run_champions_stat_sub_command(user_name):
-        self.champions_stat_sub_command.set_user_name(id)
+                for user_name in user_name_set:
+                    self.run_champions_stat_sub_command(user_name)
+
+    def run_champions_stat_sub_command(self, user_name):
+        self.champions_stat_sub_command.set_user_name(user_name)
         self.champions_stat_sub_command.retrieve()
         self.champions_stat_sub_command.parse()
         self.champions_stat_sub_command.print()
