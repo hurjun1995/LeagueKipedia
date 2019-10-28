@@ -6,6 +6,7 @@ from commands.command_base import CommandBase
 from sub_commands.counter_sub_command import CounterSubCommand
 from sub_commands.item_sub_command import ItemSubCommand
 from sub_commands.skill_sub_command import SkillSubCommand
+from my_util import *
 
 
 class Lane(Enum):
@@ -20,7 +21,7 @@ class Lane(Enum):
 
 
 class ChampionCommand(CommandBase):
-    champion_info_dict = None
+    champion_names_set = None
     champ_name = None
     champ_lane = None
 
@@ -29,7 +30,7 @@ class ChampionCommand(CommandBase):
     item_sub_command = None
 
     def __init__(self):
-        self.champion_info_dict = self.get_official_champion_info()
+        self.champion_names_set = self.get_official_champion_names_set()
         self.skill_sub_command = SkillSubCommand()
         self.counter_sub_command = CounterSubCommand()
         self.item_sub_command = ItemSubCommand()
@@ -39,7 +40,7 @@ class ChampionCommand(CommandBase):
 
     def add_command_to_subparser(self, subparsers):
         champion_subparser = subparsers.add_parser("champion")
-        champion_subparser.add_argument('champion_name', type=str, help="Name of the champion")
+        champion_subparser.add_argument('champion_name', type=str, nargs='+', help="Name of the champion")
         champion_subparser.add_argument('lane', type=Lane, choices=list(Lane), help='Lane to which champion goes')
 
         for sc in self.get_all_sub_commands():
@@ -48,28 +49,26 @@ class ChampionCommand(CommandBase):
         champion_subparser.set_defaults(func=self.run_command)
 
     @staticmethod
-    def get_official_champion_info():
+    def get_official_champion_names_set():
         data = requests.get("http://ddragon.leagueoflegends.com/cdn/9.20.1/data/en_US/champion.json").text
         json_data = json.loads(data)
-        champion_info_dict = json_data["data"]
-        return champion_info_dict
+        champion_names_set = {key.lower() for key in json_data["data"].keys()}
+        return champion_names_set
 
     def is_valid_champion(self):
         """check if given champion name exists in riot's official champion list"""
         champ_name = self.champ_name.lower()
-        s = list(champ_name)
-        s[0] = s[0].upper()
-        champ_name = "".join(s)
-        return champ_name in self.champion_info_dict
+        champ_name = no_space_and_lower(self.champ_name)
+        return champ_name in self.champion_names_set
 
     def run_command(self, args):
-        self.champ_name = args.champion_name
+        self.champ_name = ' '.join(args.champion_name)
         self.champ_lane = args.lane.value
         for sc in self.get_all_sub_commands():
             sc.set_champ_info(self.champ_name, self.champ_lane)
 
         if not self.is_valid_champion():
-            print("'{champ}' is not existing champion name".format(champ=self.champ_name))
+            print("'{champ}' is not an existing champion name".format(champ=self.champ_name))
             return
 
         sub_commands_to_run = []

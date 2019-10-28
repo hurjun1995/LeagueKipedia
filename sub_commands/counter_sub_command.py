@@ -9,7 +9,7 @@ class CounterSubCommand(SubCommandBase):
                                help='include to see counter champions in the output')
 
     def retrieve(self):
-        self.fetch_and_set_soup(f"https://na.op.gg/champion/{self.champ_name}/statistics/{self.champ_lane}/matchup?")
+        self.fetch_and_set_soup(f"https://na.op.gg/champion/{self.get_champ_name_no_space()}/statistics/{self.champ_lane}/matchup?")
 
     def parse(self):
         self.counter_champion_list = self.soup.find_all("div", class_="champion-matchup-champion-list__item")
@@ -18,9 +18,9 @@ class CounterSubCommand(SubCommandBase):
 
     def print(self):
         print("Counter Champions and win rate against them:")
-        print("{:>12} {:>13} {:>14} {:>15}".format("index", "name", "win rate", "total played"))
+        print("{:>7} {:>13} {:>14} {:>15}".format("index", "name", "win rate", "total played"))
         for i, champ in enumerate(self.counter_champion_list):
             name = champ.find('div', class_='champion-matchup-list__champion').find('span').text
             win_rate = champ.find('span', class_='champion-matchup-list__winrate').text.strip()
             total_played = champ.find('div', class_='champion-matchup-list__totalplayed').find('span').text
-            print("{:>12} {:>13} {:>14} {:>15}".format(i, name, win_rate, total_played))
+            print("{:>7} {:>13} {:>14} {:>15}".format(i+1, name, win_rate, total_played))
