@@ -35,7 +35,7 @@ class ChampionsStatSubCommand(SubCommandBase):
     def _parse_recent_games(self):
         ten_recent_games_table = self.soup.find('div', class_='GameItemList').find_all('div', class_='GameItemWrap')
         for i, game in enumerate(ten_recent_games_table):
-            game_result = game.find('div', class_='GameResult').text.strip()
+            game_result = 'W' if game.find('div', class_='GameResult').text.strip() == 'Victory' else 'L'
             champ_played = game.find('div', class_='ChampionName').find('a').text
             kda_ratio = game.find('span', class_='KDARatio').text.split(':')[0]
             kill = game.find('span', class_='Kill').text
